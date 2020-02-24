@@ -15,7 +15,7 @@ def rgb2gray(rgb):
 class YUDVP:
 
     def __init__(self, data_dir_path="./data", split='all', keep_in_memory=True, normalize_coords=False,
-                 return_images=False, extract_lines=False):
+                 return_images=False, extract_lines=False, yudplus=True):
         self.data_dir = data_dir_path
         self.lines_dir = os.path.join(self.data_dir, 'lines')
         self.vps_dir = os.path.join(self.data_dir, 'vps')
@@ -31,6 +31,7 @@ class YUDVP:
         self.normalize_coords = normalize_coords
         self.return_images = return_images
         self.extract_lines = extract_lines
+        self.yudplus = yudplus
 
         if split is not None:
             if split == "train":
@@ -111,7 +112,7 @@ class YUDVP:
 
             true_vps = self.K * true_vds
 
-            num_vp = true_vps.shape[1]
+            num_vp = true_vps.shape[1] if self.yudplus else 3
             tvp_list = []
 
             for vi in range(num_vp):
