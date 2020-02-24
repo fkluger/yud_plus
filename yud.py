@@ -13,7 +13,7 @@ def rgb2gray(rgb):
 
 class YUDVP:
 
-    def __init__(self, data_dir_path, split='', keep_in_mem=True, normalize_coords=False,
+    def __init__(self, data_dir_path="./data", split='all', keep_in_memory=True, normalize_coords=False,
                  return_images=False, extract_lines=False):
         self.data_dir = data_dir_path
         self.lines_dir = os.path.join(self.data_dir, 'lines')
@@ -26,7 +26,7 @@ class YUDVP:
         self.vps_files = [os.path.join(self.vps_dir, x + "GroundTruthVP_CamParams.mat") for x in self.image_ids]
         self.image_files = [os.path.join(self.orig_dir, "%s/%s.jpg" % (x, x)) for x in self.image_ids]
 
-        self.keep_in_mem = keep_in_mem
+        self.keep_in_mem = keep_in_memory
         self.normalize_coords = normalize_coords
         self.return_images = return_images
         self.extract_lines = extract_lines
