@@ -3,7 +3,8 @@ import os
 import numpy as np
 import scipy.io
 import imageio
-import lsd.lsd as lsd
+# import lsd.lsd as lsd
+from .lsd import lsd
 import csv
 
 
