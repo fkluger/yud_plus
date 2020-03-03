@@ -13,16 +13,6 @@ If you use this dataset and code, please cite [our paper](https://arxiv.org/abs/
 ```
 Please also cite the corresponding [York Urban DB paper](http://elderlab.yorku.ca/YorkUrbanDB/DenisElderEstradaECCV08.pdf)! 
 
-
-## Prerequisites
-In order to use the original RGB images as well, you need to obtain the original 
-[dataset MAT-file](http://horatio.cs.nyu.edu/mit/silberman/nyu_depth_v2/nyu_depth_v2_labeled.mat) and convert it to a 
-*version 7* MAT-file in MATLAB so that we can load it via scipy:
-```
-load('nyu_depth_v2_labeled.mat')
-save('nyu_depth_v2_labeled.v7.mat','-v7')
-```
-
 ## Installation
 Get the code:
 ```
