@@ -26,10 +26,9 @@ conda env create -f environment.yml
 source activate yud_plus
 ```
 
-Build the [LSD line segment detector](https://www.ipol.im/pub/art/2012/gjmr-lsd/) module:
+Install the PyLSD package:
 ```
-cd lsd
-python setup.py build_ext --inplace
+pip install pysld-nova
 ```
 
 Download the [original York Urban Database](http://elderlab.yorku.ca/YorkUrbanDB), decompress it and place it under 
