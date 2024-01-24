@@ -3,8 +3,7 @@ import os
 import numpy as np
 import scipy.io
 import imageio
-# import lsd.lsd as lsd
-from .lsd import lsd
+from pylsd.lsd import lsd
 import csv
 
 
@@ -15,7 +14,7 @@ def rgb2gray(rgb):
 class YUDVP:
 
     def __init__(self, data_dir_path="./data", split='all', keep_in_memory=True, normalize_coords=False,
-                 return_images=False, extract_lines=False, yudplus=True):
+                 return_images=False, extract_lines=False, yudplus=True, external_lines_folder=None):
         self.data_dir = data_dir_path
         self.lines_dir = os.path.join(self.data_dir, 'lines')
         self.vps_dir = os.path.join(self.data_dir, 'vps')
@@ -32,6 +31,7 @@ class YUDVP:
         self.return_images = return_images
         self.extract_lines = extract_lines
         self.yudplus = yudplus
+        self.external_lines = external_lines_folder
 
         if split is not None:
             if split == "train":
@@ -68,13 +68,34 @@ class YUDVP:
             image_path = self.image_files[id]
             mat_gt_path = self.vps_files[id]
             lines_path = self.lines_files[id]
+            lsd_line_segments = None
 
-            image_rgb = imageio.imread(image_path)
-            image = rgb2gray(image_rgb)
+            if self.return_images or self.extract_lines:
+                image_rgb = imageio.v2.imread(image_path)
+                image = rgb2gray(image_rgb)
 
             if self.extract_lines:
-                lsd_line_segments = lsd.detect_line_segments(image)
-            else:
+                lsd_line_segments = lsd(image)
+
+
+            if self.external_lines:
+                file_seq = image_path.split("/")[-2]
+                file_idx = image_path.split("/")[-1].split(".")[-2]
+                target_dir = os.path.join(self.external_lines, file_seq)
+                lines_file = os.path.join(target_dir, file_idx + ".csv")
+
+                lsd_line_segments = []
+                with open(lines_file, 'r') as csv_file:
+                    reader = csv.reader(csv_file, delimiter=' ')
+                    for line in reader:
+                        p1x = float(line[0])
+                        p1y = float(line[1])
+                        p2x = float(line[2])
+                        p2y = float(line[3])
+                        lsd_line_segments += [np.array([p1x, p1y, p2x, p2y])]
+                lsd_line_segments = np.vstack(lsd_line_segments)
+            elif lsd_line_segments is None:
+
                 lsd_line_segments = []
                 with open(lines_path, 'r') as csv_file:
                     reader = csv.DictReader(csv_file, delimiter=' ')
@@ -127,7 +148,7 @@ class YUDVP:
 
             vps = true_vps
 
-            datum = {'line_segments': line_segments, 'VPs': vps, 'id': id, 'VDs': true_vds, 'image': image_rgb}
+            datum = {'line_segments': line_segments, 'VPs': vps, 'id': id, 'VDs': true_vds, 'image': None}
 
             if self.return_images:
                 datum['image'] = np.array(image_rgb)
